@@ -39,18 +39,67 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 
 Add whatever helps you do your job. This is your cheat sheet.
 
-<!-- antfarm:workflows -->
-# Antfarm Workflows
+## Gmail / Google Workspace
 
-Antfarm CLI (always use full path to avoid PATH issues):
-`node ~/.openclaw/workspace/antfarm/dist/cli/cli.js`
+**Account:** rob.molt.gg@gmail.com
 
-Commands:
-- Install: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js workflow install <name>`
-- Run: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js workflow run <workflow-id> "<task>"`
-- Status: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js workflow status "<task title>"`
-- Logs: `node ~/.openclaw/workspace/antfarm/dist/cli/cli.js logs`
+**Quick Send Email:**
+```bash
+python3 ~/workspace/gmail-helper.py --to email@example.com --subject "Subject" --body "Message"
+```
 
-Workflows are self-advancing via per-agent cron jobs. No manual orchestration needed.
-<!-- /antfarm:workflows -->
+**Helper Script:** `~/workspace/gmail-helper.py`
+- Send emails via Gmail API
+- Auto-refresh tokens when needed
+- Can import `send_email()` function in Python
 
+**Available Services:**
+- ✅ Gmail (sending/reading)
+- ✅ Google Drive (file operations)
+- ✅ Google Docs (create/edit documents)
+- ✅ Google Sheets (spreadsheets)
+- ✅ Google Calendar (events/scheduling)
+- ✅ Google Tasks (task management)
+- ✅ Google Forms (form responses)
+
+**Tokens:** `~/.config/gmail-tokens/rob.molt.gg.json`
+- Access token (expires hourly, auto-refresh available)
+- Refresh token (long-lived)
+
+**OAuth Credentials:** `~/.gog-credentials.json`
+
+### Google Docs/Drive Auto-Refresh Wrapper
+
+**Problem:** gog CLI keyring storage wasn't working, tokens expired silently.
+
+**Solution:** Use `gtoken.py` — auto-refreshes tokens before every operation.
+
+```bash
+# Get valid token (auto-refreshes if needed)
+python3 ~/.openclaw/workspace/gtoken.py token
+
+# Create a doc
+python3 ~/.openclaw/workspace/gtoken.py create "Doc Title" "Content here"
+
+# Share a doc
+python3 ~/.openclaw/workspace/gtoken.py share <doc_id> garavitgabriel@gmail.com
+```
+
+**In Python scripts:**
+```python
+from ~/.openclaw.workspace.gtoken import get_access_token, create_doc, share_doc
+
+token = get_access_token()  # Always valid
+doc_id = create_doc("Title", "Content")
+share_doc(doc_id, "user@email.com")
+```
+
+### Skills
+
+| Skill | Description |
+|-------|-------------|
+| `morning-brief` | Daily briefing (weather, tasks, content, AI news, tips) |
+| `content-newsletter` | Weekly content digest from saved links |
+| `larry` | TikTok marketing automation |
+
+Run skill: `clawhub install <slug>`
