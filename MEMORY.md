@@ -94,6 +94,8 @@
 - Sharp, efficient communication
 - Uses Notion for calendar/tasks, Google Workspace for docs
 - Telegram for communication (including voice memos)
+- When testing date-sensitive automations, anchor to Gabriel's local timezone (Colombia, UTC-5) and confirm the effective target date before querying
+- Morning brief task logic should paginate the full Notion task database and classify by local-date buckets; first-page-only reads are unreliable on large task lists
 
 ## How I Work
 
