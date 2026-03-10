@@ -11,6 +11,8 @@ Generate Gabriel's daily morning brief in a way that matches how he actually wor
 
 ### 1. Weather
 - Fetch Bogotá weather.
+- Prefer **Open-Meteo** for reliability.
+- Use `wttr.in` only as a fallback.
 - If weather fails, say so briefly and move on.
 
 ### 2. Notion tasks

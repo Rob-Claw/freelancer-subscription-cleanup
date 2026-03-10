@@ -24,9 +24,30 @@ function runCmd(cmd) {
   }
 }
 
+function weatherCodeToText(code) {
+  const map = {
+    0: 'Clear', 1: 'Mostly clear', 2: 'Partly cloudy', 3: 'Overcast',
+    45: 'Fog', 48: 'Rime fog', 51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
+    61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 71: 'Light snow', 73: 'Snow', 75: 'Heavy snow',
+    80: 'Rain showers', 81: 'Heavy rain showers', 82: 'Violent rain showers', 95: 'Thunderstorm'
+  };
+  return map[code] || `Weather code ${code}`;
+}
+
 function getWeather() {
-  const weather = runCmd('curl -s --max-time 10 "wttr.in/Bogota?format=%c%t+%w"');
-  return weather ? weather.trim() : 'Weather unavailable';
+  const primary = runCmd('curl -s --max-time 10 "https://api.open-meteo.com/v1/forecast?latitude=4.7110&longitude=-74.0721&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=America%2FBogota"');
+  if (primary) {
+    try {
+      const data = JSON.parse(primary);
+      const c = data.current;
+      if (c) {
+        return `${weatherCodeToText(c.weather_code)}, ${c.temperature_2m}°C (feels like ${c.apparent_temperature}°C), wind ${c.wind_speed_10m} km/h`;
+      }
+    } catch {}
+  }
+
+  const fallback = runCmd('curl -s --max-time 10 "https://wttr.in/Bogota?format=%c%t+%w"');
+  return fallback ? fallback.trim() : 'Weather unavailable';
 }
 
 function getLocalDateParts() {
