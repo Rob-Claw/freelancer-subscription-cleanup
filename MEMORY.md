@@ -132,8 +132,11 @@
 
 **OpenClaw:**
 - Running version 2026.3.1 (upgraded from 2026.2.14 on March 2, 2026)
-- Nightly memory review: 4:00 AM UTC
+- Nightly memory review: 4:00 AM UTC (11:00 PM Colombia time)
 - QMD hourly updates: runs every hour
+- Good next upgrade: fold Notion task snapshots/patterns into the nightly memory review so Rub builds durable context from Gabriel’s actual day-to-day work
+- Preferred approach: pull tasks completed that day during the nightly review, every day, instead of dumping the full task database into memory
+- Current implementation uses Notion `Done? = Done` plus `Last edited time >= today` as the safe non-breaking proxy for daily completions, and writes daily snapshots to `memory/notion-completed/`
 
 **Mission Control Dashboard**
 - Built at `http://localhost:3001`
