@@ -267,3 +267,4 @@ Gabriel wanted a systematic way to find and build micro-SaaS apps. Created full 
 
 ### Key Insight (March 7)
 Gabriel clarified workflow: Save ALL ideas to backlog, never lose any. Run picker before build day to decide what to build based on competition + revenue + ease.
+- Updated build rule (March 11): validation gates are not a hard blocker; if no idea cleanly passes, still pick the best candidate worth building and explicitly note which gates are weak/failed.
