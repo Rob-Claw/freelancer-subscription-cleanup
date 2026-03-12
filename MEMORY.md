@@ -139,7 +139,7 @@
 - QMD hourly updates: runs every hour
 - Good next upgrade: fold Notion task snapshots/patterns into the nightly memory review so Rub builds durable context from Gabriel’s actual day-to-day work
 - Preferred approach: pull tasks completed that day during the nightly review, every day, instead of dumping the full task database into memory
-- Current implementation uses Notion `Done? = Done` plus `Last edited time >= today` as the safe non-breaking proxy for daily completions, and writes daily snapshots to `memory/notion-completed/`
+- Current implementation uses Notion `Done? = Done` plus `Last edited time >= start of today in Colombia time (America/Bogota)` as the safe non-breaking proxy for daily completions, and writes daily snapshots to `memory/notion-completed/`
 
 **Mission Control Dashboard**
 - Built at `http://localhost:3001`
@@ -267,4 +267,15 @@ Gabriel wanted a systematic way to find and build micro-SaaS apps. Created full 
 
 ### Key Insight (March 7)
 Gabriel clarified workflow: Save ALL ideas to backlog, never lose any. Run picker before build day to decide what to build based on competition + revenue + ease.
+
+### Validation Rule Update (March 11)
+- Validation gates are **advisory**, not a hard stop
+- If no idea cleanly passes validation, still pick the best candidate worth building
+- Must explicitly note which gates are weak/failed in the picker output
+- Example: AI Health Prep Auditor selected despite weak explicit demand packet and distribution map
+
+### Cron Troubleshooting (March 11)
+- boring-saas-picker cron can get stuck with stale `runningAtMs` state
+- Manual fix: clear zombie state + update live cron payload before running
+- Lesson: check cron status before assuming it's working
 - Updated build rule (March 11): validation gates are not a hard blocker; if no idea cleanly passes, still pick the best candidate worth building and explicitly note which gates are weak/failed.

@@ -21,7 +21,7 @@ Insert a Notion-completed-tasks step before the final synthesis:
 1. Query the Notion Task List database.
 2. Pull only tasks where:
    - `Done?` is `Done`
-   - `Last edited time` is on or after today's UTC date
+   - `Last edited time` is on or after the start of today in Gabriel's local timezone (`America/Bogota`)
 3. Extract task names.
 4. Save a clean markdown snapshot in `memory/notion-completed/YYYY-MM-DD.md`.
 5. Use that snapshot during nightly synthesis.
