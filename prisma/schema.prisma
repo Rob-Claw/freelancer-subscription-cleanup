@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  name        String
+  cost        Float
+  billingCycle String  @default("monthly")
+  usageRating Int      @default(3)
+  category    String   @default("other")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
