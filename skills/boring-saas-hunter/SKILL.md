@@ -311,44 +311,51 @@ Generate `~/.openclaw/workspace/memory/build-specs/[app-name]-spec.md`:
 - [ ] Clear signal to continue or kill
 ```
 
-### Build Process
+### Build Process — Handoff to Dev Agent
 
-Hand off to the vibe coder workflow or build directly. Apps are standalone projects — NOT GitHub branches or PRs. Each app gets its own directory.
+**Do NOT build the app yourself.** Hand off to the Dev agent, who handles all implementation, testing, deployment, and tracking.
 
-**Project structure:**
+### Build-Day Reliability Rule
+
+Build day should be **self-healing**.
+
+If the build-day runner does not find a fresh READY handoff, it must **not** immediately skip. Instead:
+1. Check whether a recent unbuilt spec already exists in `~/.openclaw/workspace/memory/build-specs/`
+2. If not, re-run picker logic against the backlog in the same build-day turn
+3. Generate a fresh spec for the best candidate worth building now
+4. Then hand off to Dev
+
+Only skip if, after this recovery path, there is still no viable candidate. The pipeline should prefer momentum over dead air.
+
+#### How to Hand Off
+
+After generating the build spec at `~/.openclaw/workspace/memory/build-specs/[app-name]-spec.md`, send a message to the Dev agent:
+
 ```
-~/projects/[app-name]/
-  src/
-  prisma/
-  package.json
-  .env
-  ...
-```
-
-**Build rules:**
-1. **Ship ugly.** No animations, no dark mode, no perfect design. Functional > beautiful.
-2. **Deploy to VPS immediately.** Run on localhost with a dedicated port. No Railway, no Vercel.
-3. **Add analytics from day 1.** You can't track what you don't measure.
-4. **Register the port.** Update mission control so we know what runs where.
-
-**Deployment on VPS:**
-```bash
-cd ~/projects/[app-name]
-npm install
-npx prisma generate  # if using Prisma
-npx next dev -H 0.0.0.0 -p [PORT]
+message developer "New build ready: [App Name]. Spec at ~/.openclaw/workspace/memory/build-specs/[app-name]-spec.md. Run build-app [app-name]-spec.md"
 ```
 
-For persistent running (survives terminal close):
-```bash
-nohup npx next dev -H 0.0.0.0 -p [PORT] > /tmp/[app-name].log 2>&1 &
-```
+The Dev agent will:
+1. Read the build spec
+2. Scaffold the project (Next.js + TypeScript + Prisma + Tailwind)
+3. Implement all MVP features from the spec
+4. Test (`npm run build` must pass)
+5. Create a git branch, commit, push, and create a PR
+6. Deploy to VPS on an available port
+7. Update `boring-saas-tracker.json` with the new app
+8. Report back with the PR URL and SSH tunnel command
 
-**Access from local machine** (VPS ports are firewalled):
-```bash
-ssh -i ~/.ssh/openclaw_ed25519 -L [PORT]:localhost:[PORT] openclaw@5.161.91.237 -N
-# Then open http://localhost:[PORT]
-```
+#### What You Do After Handoff
+
+- **Wait for Dev to report completion.** Don't check in repeatedly.
+- **Once Dev reports done:** verify the tracker was updated, then update the backlog entry (see below).
+- **If Dev reports a failure:** review the error, fix the build spec if needed, re-send.
+
+#### Build Rules (enforced by Dev)
+1. **Ship ugly.** Functional > beautiful. This is an MVP.
+2. **Deploy to VPS immediately.** Localhost with a dedicated port. No Railway, no Vercel.
+3. **Add analytics from day 1.** Track what matters.
+4. **Register the port.** Dev updates the tracker automatically.
 
 After build, update the backlog entry:
 
@@ -492,7 +499,20 @@ Task:
   6. Message user: "Build day! I picked [idea]. Worth building because [reason]. Risks: [weak gates]."
 ```
 
-### 3. Weekly Tracker (Sunday, 10:00 AM user's timezone)
+### 3. Build Day Runner (Wednesday + Saturday, 10:00 PM user's timezone)
+
+```
+Schedule: Wed,Sat at 22:00
+Task:
+  1. Check tracker for an existing READY / READY-WITH-RISK handoff that has not been launched
+  2. If none exists, look for the newest unbuilt spec in ~/.openclaw/workspace/memory/build-specs/
+  3. If no unbuilt spec exists, re-run picker logic immediately against the backlog and generate one
+  4. Hand the selected spec to Dev / workflow for implementation
+  5. Only skip if there is still no viable candidate after the recovery path
+  6. Message user clearly whether it built, recovered, or truly skipped
+```
+
+### 4. Weekly Tracker (Sunday, 10:00 AM user's timezone)
 
 ```
 Schedule: Sun at 10:00
