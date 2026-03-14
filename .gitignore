@@ -39,3 +39,6 @@ next-env.d.ts
 
 # Local env
 .env
+
+# Dependencies
+node_modules/
